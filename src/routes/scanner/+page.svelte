@@ -14,8 +14,8 @@
 		const reader = new Html5Qrcode('reader', false);
 		reader.start({facingMode : "environment"},
 						{
-							fps: 10, // Optional frame per seconds for qr code scanning
-							qrbox: { width: 250, height: 250 } // Optional if you want bounded box UI
+							fps: 30, // Optional frame per seconds for qr code scanning
+							// qrbox: { width: 250, height: 250 } // Optional if you want bounded box UI
 						},
 						(decodedText, decodedResult) => {
 							// do something when code is read
