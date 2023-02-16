@@ -9,6 +9,8 @@
 	 */
 	 export let cameraId;
 
+	 let showButtonStart = true
+
 
 	const startScan = () => {
 		const reader = new Html5Qrcode('reader', false);
@@ -26,6 +28,7 @@
 							// parse error, ideally ignore it.
 							// console.log(errorMessage);
 						});
+		showButtonStart = false
 	}
 
 	
@@ -41,7 +44,9 @@
 
 <div class="container">
 	<div id="reader" />
+	{#if showButtonStart}
 	<button on:click={startScan}>Start Scan</button>
+	{/if}
 </div>
 
 <style>
