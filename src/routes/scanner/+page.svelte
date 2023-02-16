@@ -20,6 +20,7 @@
 						(decodedText, decodedResult) => {
 							// do something when code is read
 							console.log(decodedText, decodedResult);
+							alert(decodedText);
 						},
 						(errorMessage) => {
 							// parse error, ideally ignore it.
