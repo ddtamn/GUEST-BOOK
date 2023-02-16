@@ -23,12 +23,10 @@
 							// do something when code is read
 							if (decodedText) {
 								console.log(decodedText);
-								alert(decodedText)
 								html5Qrcode.stop().then((ignore) => {
 									console.log(ignore);
 								}).catch((err) => {
 									console.log(err);
-									alert(err)
 								})
 
 							}
@@ -36,8 +34,7 @@
 						},
 						(errorMessage) => {
 							// parse error, ideally ignore it.
-							// console.log(errorMessage);
-							alert(errorMessage)
+							console.log(errorMessage);
 						}
 					);
 				}
