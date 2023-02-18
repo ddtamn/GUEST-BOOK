@@ -8,7 +8,7 @@
 	 */
 	export let cameraId;
 
-	let showButtonStart = true;
+	let showButtonStart = false;
 
 	// const sendToGreeting = (data) => {
 	// 	const channel = supabase.channel('greeting').subscribe((status) => {
