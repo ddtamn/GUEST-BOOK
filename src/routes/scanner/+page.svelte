@@ -8,7 +8,7 @@
 	 */
 	export let cameraId;
 
-	let showButtonStart = false;
+	let showButtonStart = true;
 
 	// const sendToGreeting = (data) => {
 	// 	const channel = supabase.channel('greeting').subscribe((status) => {
@@ -22,7 +22,7 @@
 	// 	});
 	// };
 
-	let showModal = true;
+	let showModal = false;
 
 	const startScan = () => {
 		const reader = new Html5Qrcode('reader', false);
