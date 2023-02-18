@@ -2,40 +2,113 @@
 	import { Html5Qrcode } from 'html5-qrcode';
 	import { onMount } from 'svelte';
 	import supabase from '../../lib/supabaseClient';
+	import { v4 as uuidv4 } from 'uuid';
 
 	/**
 	 * @type {string | MediaTrackConstraints}
 	 */
 	export let cameraId;
 
+	/**
+	 * @type {any}
+	 */
+	let name;
+	/**
+	 * @type {any}
+	 */
+	let description;
+	/**
+	 * @type {any}
+	 */
+	let type;
+
 	let showButtonStart = true;
 
-	// const sendToGreeting = (data) => {
-	// 	const channel = supabase.channel('greeting').subscribe((status) => {
-	// 		if (status === 'SUBSCRIBED') {
-	// 			channel.send({
-	// 				type: 'broadcast',
-	// 				event: 'supa',
-	// 				payload: data
-	// 			});
-	// 		}
-	// 	});
-	// };
+	const sendToGreeting = (/** @type {any[]} */ data) => {
+		const channel = supabase.channel('greeting').subscribe((status) => {
+			if (status === 'SUBSCRIBED') {
+				channel.send({
+					type: 'broadcast',
+					event: 'supa',
+					payload: data[0]
+				});
+			}
+		});
+	};
 
 	let showModal = false;
+	/**
+	 * @type {Html5Qrcode}
+	 */
+	let reader;
+
+	const openModal = (/** @type {any} */ data) => {
+		name = data.name;
+		description = data.description;
+		type = data.type;
+		showModal = true;
+	};
+
+	async function insertToGuestPresent() {
+		const uuid = uuidv4();
+		try {
+			let { data, error } = await supabase
+				.from('guestpresent')
+				.insert([
+					{
+						name,
+						description,
+						type,
+						code: uuid,
+						total_guest: 1
+					}
+				])
+				.select();
+			if (data) {
+				console.log(data);
+				name = '';
+				description = '';
+				type = '';
+				showModal = false;
+				sendToGreeting(data);
+				startScan();
+			}
+		} catch (error) {}
+	}
+
+	/**
+	 * @param {string} code
+	 */
+	async function getGuestCode(code) {
+		try {
+			let { data, error } = await supabase.from('guestsbook').select('*').eq('guest_code', code);
+			if (error) {
+				console.log(error);
+			}
+			if (data) {
+				console.log(data);
+				reader.stop();
+				openModal(data[0]);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	const startScan = () => {
-		const reader = new Html5Qrcode('reader', false);
 		reader.start(
 			{ facingMode: 'environment' },
 			{
-				fps: 30, // Optional frame per seconds for qr code scanning
-				qrbox: { width: 250, height: 250 } // Optional if you want bounded box UI
+				fps: 10, // Optional frame per seconds for qr code scanning
+				qrbox: { width: 500, height: 500 } // Optional if you want bounded box UI
 			},
 			(decodedText, decodedResult) => {
 				// do something when code is read
-				console.log(decodedText, decodedResult);
-				alert(decodedText);
+				if (decodedText) {
+					getGuestCode(decodedText);
+				}
+				// console.log(decodedText, decodedResult);
+				// alert(decodedText);
 			},
 			(errorMessage) => {
 				// parse error, ideally ignore it.
@@ -51,6 +124,7 @@
 				cameraId = devices[0].id;
 			}
 		});
+		reader = new Html5Qrcode('reader', false);
 	});
 </script>
 
@@ -78,15 +152,21 @@
 					</div>
 					<div class="form-group">
 						<label for="name" class="form-label">Guest Name</label>
-						<input type="text" id="name" name="name" class="form-control" />
+						<input type="text" id="name" name="name" class="form-control" bind:value={name} />
 					</div>
 					<div class="form-group">
 						<label for="description" class="form-label">Description</label>
-						<input type="text" id="description" name="description" class="form-control" />
+						<input
+							type="text"
+							id="description"
+							name="description"
+							class="form-control"
+							bind:value={description}
+						/>
 					</div>
 					<div class="form-group">
 						<label for="type" class="form-label">Guest Type</label>
-						<select name="type" id="type" class="form-select">
+						<select name="type" id="type" class="form-select" bind:value={type}>
 							<option value="" />
 							<option value="VIP 1">VIP 1</option>
 							<option value="VIP 1">VIP 2</option>
@@ -94,7 +174,7 @@
 							<option value="VIP 1">VIP 4</option>
 						</select>
 					</div>
-					<button class="submit-button">Submit</button>
+					<button class="submit-button" on:click={insertToGuestPresent}>Submit</button>
 				</div>
 			</div>
 		</div>
