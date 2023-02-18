@@ -26,6 +26,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"html5-qrcode": "^2.3.4"
+		"@supabase/supabase-js": "^2.8.0",
+		"html5-qrcode": "^2.3.4",
+		"qrcode": "^1.5.1"
 	}
 }
