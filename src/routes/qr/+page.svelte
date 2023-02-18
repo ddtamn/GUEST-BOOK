@@ -3,6 +3,8 @@
 
 	import supabase from '../../lib/supabaseClient';
 
+	// LIST OF GUESTS
+
 	const guestData = [
 		{
 			name: 'ADE NURAMDANI, SH., S.I.K., M.M',
@@ -101,20 +103,6 @@
 		}
 	}
 
-	// const generateQrCode = async (/** @type {any} */ text) => {
-	// 	try {
-	// 		const qrCode = await Qrcode.toDataURL(text, {
-	// 			width: 1920,
-	// 			errorCorrectionLevel: 'H'
-	// 		});
-	// 		qrCodeData = await qrCode;
-	// 		console.log(qrCode);
-	// 		// return qrCode;
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// };
-
 	const generate = () => {
 		guestData.forEach((guest) => {
 			insertGuest(guest.name, guest.type, guest.description);
@@ -136,20 +124,6 @@
 		a.click();
 		document.body.removeChild(a);
 	}
-
-	// const download = async (/** @type {any} */ file) => {
-	// 	const response = await fetch('file');
-	// 	const blob = await response.blob();
-	// 	const url = URL.createObjectURL(blob);
-	// 	const a = document.createElement('a');
-	// 	a.href = url;
-	// 	a.download = 'image.png';
-	// 	document.body.appendChild(a);
-	// 	a.click();
-	// 	document.body.removeChild(a);
-	// };
-
-	// generateQrCode('diditamin');
 </script>
 
 <button on:click={generate}>Generate</button>
