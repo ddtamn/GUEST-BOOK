@@ -2,47 +2,11 @@
 	import Qrcode from 'qrcode';
 
 	import supabase from '../../lib/supabaseClient';
+	import data from '../../lib/GuestData';
 
 	// LIST OF GUESTS
 
-	const guestData = [
-		{
-			name: 'ADE NURAMDANI, SH., S.I.K., M.M',
-			type: 'VIP 1',
-			description: 'KAPOLRES BANGGAI'
-		},
-		{
-			name: 'MUH KHAIRIL AKBAR',
-			type: 'VIP 1',
-			description: ''
-		},
-		{
-			name: 'SATOMY SUWARDI DUNGGA',
-			type: 'VIP 1',
-			description: 'PIMPINAN BNI CABANG LUWUK'
-		},
-		{
-			name: 'IR. H. AMIRUDIN TAMOREKA',
-			type: 'VIP 1',
-			description: 'BUPATI BANGGAI'
-		},
-		{
-			name: 'BAMBANG SUTEDDY',
-			type: 'VIP 1',
-			description: 'KEPAL DINAS PUPR'
-		},
-		{
-			name: 'INDRAMULIA HENDRO SUNDAH',
-			type: 'VIP 1',
-			description: 'PEMIMPIN PEMASARAN'
-		},
-		{
-			name: 'FEISAL MUHAMMAD IQBAL',
-			type: 'VIP 1',
-			description: 'PIMPINAN KCP TOILI'
-		}
-	];
-
+	const guestData = data;
 	let qrCodeData;
 
 	const insertGuest = async (

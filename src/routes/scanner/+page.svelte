@@ -22,7 +22,20 @@
 	 */
 	let type;
 
+	/**
+	 * @type {any}
+	 */
+	let total_guest = 0;
+
 	let showButtonStart = true;
+
+	let showModal = true;
+	/**
+	 * @type {Html5Qrcode}
+	 */
+	let reader;
+
+	let checkin_time = new Date();
 
 	const sendToGreeting = (/** @type {any[]} */ data) => {
 		const channel = supabase.channel('greeting').subscribe((status) => {
@@ -35,12 +48,6 @@
 			}
 		});
 	};
-
-	let showModal = false;
-	/**
-	 * @type {Html5Qrcode}
-	 */
-	let reader;
 
 	const openModal = (/** @type {any} */ data) => {
 		name = data.name;
@@ -73,7 +80,9 @@
 				sendToGreeting(data);
 				startScan();
 			}
-		} catch (error) {}
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	/**
@@ -139,14 +148,14 @@
 	{#if showModal}
 		<div class="modal">
 			<div class="wrapper">
-				<div class="close">&Chi</div>
+				<!-- <div class="close">&Chi</div> -->
 				<div class="head">
-					<p class="title">Confirm Guest</p>
+					<p class="title">CHECK IN BERHASIL</p>
 				</div>
 				<div class="body">
 					<div class="image">
 						<img
-							src="https://www.seekpng.com/png/detail/966-9665493_my-profile-icon-blank-profile-image-circle.png"
+							src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Eo_circle_green_checkmark.svg/2048px-Eo_circle_green_checkmark.svg.png"
 							alt=""
 						/>
 					</div>
@@ -174,6 +183,22 @@
 							<option value="VIP 1">VIP 4</option>
 						</select>
 					</div>
+					<div class="form-group">
+						<label for="total_guest">Jumlah Tamu</label>
+						<div class="form-count">
+							<button
+								on:click={() => (total_guest = total_guest - 1)}
+								disabled={total_guest < 1 ? true : false}>-</button
+							>
+							<input type="text" bind:value={total_guest} readonly class="form-control" />
+							<button on:click={() => (total_guest = total_guest + 1)}>+</button>
+						</div>
+					</div>
+					<p style="margin-bottom: 1rem;">
+						{`${checkin_time.getDate()}-${
+							checkin_time.getMonth() + 1
+						}-${checkin_time.getFullYear()} | ${checkin_time.getHours()}:${checkin_time.getMinutes()}:${checkin_time.getSeconds()}`}
+					</p>
 					<button class="submit-button" on:click={insertToGuestPresent}>Submit</button>
 				</div>
 			</div>
@@ -238,15 +263,16 @@
 		font-size: 1.5rem;
 		font-weight: bold;
 		margin-bottom: 1.5rem;
+		color: #41a145;
 	}
 
-	.close {
+	/* .close {
 		position: absolute;
 		top: 1rem;
 		right: 1rem;
 		font-family: sans-serif;
 		font-weight: bold;
-	}
+	} */
 
 	.modal .body {
 		display: flex;
@@ -271,6 +297,7 @@
 
 	.form-label {
 		display: inline-block;
+		margin-bottom: 0.5rem;
 	}
 
 	.form-control {
@@ -324,5 +351,33 @@
 		transition: transform 0.2s ease-in-out; /* add transition property */
 		box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 		width: 100%;
+	}
+
+	.form-count {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.form-count button {
+		width: 10%;
+		padding: 0.375rem 0.75rem;
+		font-size: 1rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #212529;
+		background-color: #fff;
+		background-clip: padding-box;
+		border: 1px solid #ced4da;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		border-radius: 0.25rem;
+		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	}
+
+	.form-count .form-control {
+		text-align: center;
 	}
 </style>
