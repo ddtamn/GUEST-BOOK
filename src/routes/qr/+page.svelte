@@ -3,10 +3,14 @@
 
 	import supabase from '../../lib/supabaseClient';
 	import data from '../../lib/GuestData';
+	import { onMount } from 'svelte';
 
 	// LIST OF GUESTS
 
 	const guestData = data;
+	/**
+	 * @type {string}
+	 */
 	let qrCodeData;
 
 	const insertGuest = async (
@@ -14,7 +18,7 @@
 		/** @type {any} */ type,
 		/** @type {any} */ description
 	) => {
-		let guestcode = randomString(name.length);
+		let guestcode = randomString(6);
 		try {
 			const { data, error } = await supabase
 				.from('guestsbook')
@@ -46,19 +50,38 @@
 	};
 
 	/**
+	 * @type {HTMLCanvasElement}
+	 */
+	let canvasElement;
+	let newFileName = 124;
+	/**
 	 * @param {any} text
 	 * @param {any} filename
 	 */
 	async function generateQrCode(text, filename) {
 		try {
 			const qrCode = await Qrcode.toDataURL(text, {
-				width: 1920,
+				width: 1000,
 				errorCorrectionLevel: 'H'
 			});
 			qrCodeData = await qrCode;
 			// console.log(qrCode);
 			if (qrCodeData) {
-				download(qrCodeData, filename);
+				let context = canvasElement.getContext('2d');
+				if (context) {
+					let img = new Image();
+					img.src = qrCodeData;
+					context.font = '24px Poppins';
+					context.textAlign = 'center';
+					context.fillStyle = 'black';
+
+					img.onload = function () {
+						context?.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
+						context?.fillText(`RR${newFileName.toString()}`, canvasElement.width / 2, 950);
+						// console.log(canvasElement.toDataURL());
+						download(canvasElement.toDataURL(), newFileName);
+					};
+				}
 			}
 			// download( await qrCode);
 			// return qrCode;
@@ -67,10 +90,21 @@
 		}
 	}
 
+	onMount(() => {
+		canvasElement = document.createElement('canvas');
+		canvasElement.height = 1000;
+		canvasElement.width = 1000;
+	});
+
+	let index = 0;
+
 	const generate = () => {
-		guestData.forEach((guest) => {
-			insertGuest(guest.name, guest.type, guest.description);
-		});
+		insertGuest('', 'GUEST', '');
+		// index++;
+		newFileName++;
+		// guestData.forEach((guest) => {
+		// 	insertGuest(guest.name, guest.type, guest.description);
+		// });
 	};
 
 	/**
