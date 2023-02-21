@@ -107,7 +107,7 @@
 			}
 			if (data) {
 				console.log(data);
-				reader.stop();
+				// reader.stop();
 				openModal(data[0]);
 			}
 		} catch (error) {
@@ -115,28 +115,35 @@
 		}
 	}
 
-	const startScan = () => {
-		reader.start(
-			{ facingMode: 'environment' },
-			{
-				fps: 10, // Optional frame per seconds for qr code scanning
-				qrbox: { width: 300, height: 300 } // Optional if you want bounded box UI
-			},
-			(decodedText, decodedResult) => {
-				// do something when code is read
-				if (decodedText) {
-					getGuestCode(decodedText);
+	async function startScan() {
+		try {
+			reader.start(
+				{ facingMode: 'environment' },
+				{
+					fps: 25, // Optional frame per seconds for qr code scanning
+					qrbox: { width: 300, height: 300 } // Optional if you want bounded box UI
+				},
+				(decodedText, decodedResult) => {
+					// do something when code is read
+					console.log(decodedText);
+					console.log(decodedResult);
+					if (decodedText) {
+						getGuestCode(decodedText);
+						alert(decodedText);
+					}
+					// console.log(decodedText, decodedResult);
+					// alert(decodedText);
+				},
+				(errorMessage) => {
+					// parse error, ideally ignore it.
+					console.log(errorMessage);
 				}
-				// console.log(decodedText, decodedResult);
-				// alert(decodedText);
-			},
-			(errorMessage) => {
-				// parse error, ideally ignore it.
-				// console.log(errorMessage);
-			}
-		);
-		showButtonStart = false;
-	};
+			);
+			showButtonStart = false;
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	onMount(() => {
 		Html5Qrcode.getCameras().then((devices) => {
