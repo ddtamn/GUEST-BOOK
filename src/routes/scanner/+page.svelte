@@ -25,11 +25,11 @@
 	/**
 	 * @type {any}
 	 */
-	let total_guest = 0;
+	let total_guest = 1;
 
 	let showButtonStart = true;
 
-	let showModal = true;
+	let showModal = false;
 	/**
 	 * @type {Html5Qrcode}
 	 */
@@ -67,7 +67,7 @@
 						description,
 						type,
 						code: uuid,
-						total_guest: 1
+						total_guest: total_guest
 					}
 				])
 				.select();
@@ -90,6 +90,17 @@
 	 */
 	async function getGuestCode(code) {
 		try {
+			if (code === 'rr230323fromonline') {
+				let data = [
+					{
+						name: '',
+						description: '',
+						type: 'GUEST'
+					}
+				];
+
+				openModal(data[0]);
+			}
 			let { data, error } = await supabase.from('guestsbook').select('*').eq('guest_code', code);
 			if (error) {
 				console.log(error);
@@ -109,7 +120,7 @@
 			{ facingMode: 'environment' },
 			{
 				fps: 10, // Optional frame per seconds for qr code scanning
-				qrbox: { width: 500, height: 500 } // Optional if you want bounded box UI
+				qrbox: { width: 300, height: 300 } // Optional if you want bounded box UI
 			},
 			(decodedText, decodedResult) => {
 				// do something when code is read
