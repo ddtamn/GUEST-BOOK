@@ -1,5 +1,8 @@
 <script>
-  import '../style.css'
+	import '../style.css';
 </script>
 
-<slot/>
+<svelte:head>
+	<title>Guest Book | DINVITE</title>
+</svelte:head>
+<slot />

@@ -1,5 +1,40 @@
 <script>
 	import GuestsTable from '../lib/GuestsTable.svelte';
+	import * as XLSX from 'xlsx';
+	import supabase from '$lib/supabaseClient';
+	import { onMount } from 'svelte';
+
+	/**
+	 * @type {any[]}
+	 */
+	let guest_data;
+
+	async function getData() {
+		try {
+			let { data, error } = await supabase
+				.from('guestpresent')
+				.select('*')
+				.order('id', { ascending: false });
+			if (data) {
+				guest_data = data;
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	onMount(() => {
+		getData();
+	});
+
+	async function exportToExcel() {
+		if (guest_data.length > 1) {
+			const wb = XLSX.utils.book_new();
+			const ws = XLSX.utils.json_to_sheet(guest_data);
+			XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+			XLSX.writeFile(wb, 'GUESTBOOK DIGITAL RANDHYA & RIRIN.xlsx');
+		}
+	}
 </script>
 
 <main>
@@ -16,8 +51,7 @@
 	<div class="container">
 		<div class="menu">
 			<button>Add Guest</button>
-			<a href="/scanner"><button>Scan QR-Code</button></a>
-			<button>Export to Excel</button>
+			<button on:click={exportToExcel}>Export to Excel</button>
 			<button>Export to PDF</button>
 		</div>
 		<GuestsTable />

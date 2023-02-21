@@ -1,6 +1,8 @@
 <script>
 	import supabase from '../../lib/supabaseClient';
 	import { fly } from 'svelte/transition';
+	import { onMount } from 'svelte';
+	import moment from 'moment';
 
 	/**
 	 * @type {{ [key: string]: any; type: "broadcast"; event: string; }}
@@ -8,16 +10,77 @@
 	let data;
 
 	let showGreeting = false;
-
+	let showComment = false;
 	supabase
 		.channel('greeting')
-		.on('broadcast', { event: 'supa' }, (payload) => (data = payload))
+		.on(
+			'broadcast',
+			{ event: 'supa' },
+			(payload) => (
+				(data = payload),
+				(showGreeting = false),
+				setTimeout(() => {
+					showGreeting = true;
+				}, 1000),
+				setTimeout(() => {
+					showGreeting = false;
+				}, 8000)
+			)
+		)
 		.subscribe();
+
+	/**
+	 * @type {any}
+	 */
+	let name;
+	/**
+	 * @type {any}
+	 */
+	let comment;
+	/**
+	 * @type {any}
+	 */
+	let created_at;
+	async function notify() {
+		try {
+			let { data, error } = await supabase
+				.from('comments')
+				.select('*')
+				.order('id', { ascending: false });
+			if (data) {
+				let i = 0;
+				setInterval(() => {
+					showComment = false;
+					setTimeout(() => {
+						showComment = true;
+						// @ts-ignore
+						name = data[i].name;
+						// @ts-ignore
+						comment = data[i].comment;
+						// @ts-ignore
+						created_at = data[i].created_at;
+						i++;
+					}, 3000);
+					if (i === data?.length) {
+						i = 0;
+					}
+				}, 10000);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	onMount(() => {
+		notify();
+	});
+
+	console.clear();
 </script>
 
 <div class="container">
 	<div class="image">
-		<img src="https://dinvite.online/themes/assets/demo/preview12/4.jpg" alt="" />
+		<img src="/KTN07436.jpg" alt="" />
 	</div>
 	<div class="content">
 		<p class="head">Welcome to <br /> The Weddding of</p>
@@ -28,19 +91,56 @@
 			<!-- <button on:click={() => (showGreeting = true)}>tes</button> -->
 		</div>
 	</div>
-	{#if showGreeting}
+	{#if showGreeting && data}
 		<div class="greeting-card" transition:fly={{ duration: 1000 }}>
 			<div class="wrapper">
 				<p>Selamat Datang</p>
-				<h2>I MADE BAGUS ADITYA M., S.T.K., S.I.K., M.A.I.C.</h2>
-				<h6>KASAT LANTAS</h6>
+				<h2>{data.payload.name}</h2>
+				<h6>{data.payload.description || ''}</h6>
 				<!-- <button on:click={() => (showGreeting = false)}>close</button> -->
 			</div>
 		</div>
 	{/if}
+	<div class="comment {showComment ? 'show' : ''}">
+		<h4>{name}</h4>
+		<p>
+			{comment}
+		</p>
+		<i>{moment(created_at).fromNow()}</i>
+	</div>
 </div>
 
 <style>
+	.comment {
+		position: fixed;
+		background-color: #e6d7c1;
+		padding: 1rem;
+		padding-inline: 2rem;
+		border-radius: 12px;
+		bottom: 2rem;
+		left: 2rem;
+		max-width: 25%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: start;
+		text-align: left;
+		gap: 1rem;
+		transform: translateX(-110%);
+		opacity: 0;
+		transition: all 0.3s ease-in-out;
+	}
+
+	.comment.show {
+		transform: translateX(0);
+		opacity: 1;
+	}
+
+	.comment h4 {
+		color: #7e2502;
+		font-size: 1.5rem;
+	}
+
 	.container {
 		width: 100%;
 		height: 100vh;
@@ -105,6 +205,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		z-index: 999;
 	}
 
 	.wrapper {

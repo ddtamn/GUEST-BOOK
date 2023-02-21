@@ -1,13 +1,9 @@
 <script>
-	import { Html5Qrcode } from 'html5-qrcode';
 	import { onMount } from 'svelte';
 	import supabase from '../../lib/supabaseClient';
 	import { v4 as uuidv4 } from 'uuid';
-
-	/**
-	 * @type {string | MediaTrackConstraints}
-	 */
-	export let cameraId;
+	import { MultiFormatReader } from '@zxing/library';
+	import { Html5Qrcode } from 'html5-qrcode';
 
 	/**
 	 * @type {any}
@@ -30,10 +26,6 @@
 	let showButtonStart = true;
 
 	let showModal = false;
-	/**
-	 * @type {Html5Qrcode}
-	 */
-	let reader;
 
 	let checkin_time = new Date();
 
@@ -114,49 +106,38 @@
 			console.log(error);
 		}
 	}
-
+	/**
+	 * @type {MultiFormatReader}
+	 */
+	let reader;
+	/**
+	 * @type {any}
+	 */
+	let selectedDeviceId;
 	async function startScan() {
-		try {
-			reader.start(
-				{ facingMode: 'environment' },
-				{
-					fps: 25, // Optional frame per seconds for qr code scanning
-					qrbox: { width: 300, height: 300 } // Optional if you want bounded box UI
-				},
-				(decodedText, decodedResult) => {
-					// do something when code is read
-					console.log(decodedText);
-					console.log(decodedResult);
-					if (decodedText) {
-						getGuestCode(decodedText);
-						alert(decodedText);
-					}
-					// console.log(decodedText, decodedResult);
-					// alert(decodedText);
-				},
-				(errorMessage) => {
-					// parse error, ideally ignore it.
-					console.log(errorMessage);
-				}
-			);
-			showButtonStart = false;
-		} catch (error) {
-			console.log(error);
-		}
+		reader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
+			if (err) {
+				console.log(err);
+			}
+			if (result) {
+				console.log(result);
+			}
+		});
 	}
 
 	onMount(() => {
 		Html5Qrcode.getCameras().then((devices) => {
 			if (devices && devices.length) {
-				cameraId = devices[0].id;
+				selectedDeviceId = devices[0].id;
 			}
 		});
-		reader = new Html5Qrcode('reader', false);
+		reader = new MultiFormatReader();
 	});
 </script>
 
 <div class="container">
-	<div id="reader" />
+	<!-- svelte-ignore a11y-media-has-caption -->
+	<video id="video" width="500" height="500" />
 	{#if showButtonStart}
 		<div class="button-container">
 			<button on:click={startScan}>Start Scan</button>
@@ -228,9 +209,6 @@
 	.container {
 		width: 100vw;
 		height: 100vh;
-		/* display: flex;
-		justify-content: center;
-		align-items: center; */
 	}
 
 	.button-container {
@@ -283,14 +261,6 @@
 		margin-bottom: 1.5rem;
 		color: #41a145;
 	}
-
-	/* .close {
-		position: absolute;
-		top: 1rem;
-		right: 1rem;
-		font-family: sans-serif;
-		font-weight: bold;
-	} */
 
 	.modal .body {
 		display: flex;
