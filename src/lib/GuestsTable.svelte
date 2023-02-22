@@ -80,7 +80,7 @@
 		openModalEdit = true;
 		name = data.name;
 		description = data.description;
-		type = data.description;
+		type = data.type;
 		total_guest = data.total_guest;
 		id = data.id;
 	};
