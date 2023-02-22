@@ -33,6 +33,7 @@
 		"moment": "^2.29.4",
 		"qr-scanner": "^1.4.2",
 		"qrcode": "^1.5.1",
+		"svelte-icons-pack": "^2.0.0",
 		"uuid": "^9.0.0",
 		"xlsx": "^0.18.5"
 	}
