@@ -108,16 +108,67 @@
 		</p>
 		<i>{moment(created_at).fromNow()}</i>
 	</div>
+	<div class="footer">
+		<p class="online">Online</p>
+		<h4>https://randhyaririn.online</h4>
+		<div class="logo">
+			<p>Powered by</p>
+			<img src="/favicon.png" alt="" />
+			<p>Dinvite</p>
+		</div>
+	</div>
 </div>
 
 <style>
+	.footer {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		background-color: #202020;
+		height: 2.5rem;
+		width: 100%;
+		padding-inline: 3rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		color: whitesmoke;
+	}
+
+	.footer .logo {
+		display: flex;
+		justify-content: center;
+	}
+
+	.footer .logo img {
+		width: 20px;
+		margin-left: 1rem;
+		margin-right: 0.3rem;
+		border-radius: 3px;
+	}
+
+	.footer .online {
+		font-weight: bold;
+		position: relative;
+	}
+
+	.footer .online::before {
+		content: '';
+		position: absolute;
+		width: 13px;
+		background-color: rgb(0, 168, 0);
+		height: 13px;
+		left: -1.3rem;
+		bottom: 5px;
+		border-radius: 100%;
+	}
+
 	.comment {
 		position: fixed;
 		background-color: #e6d7c1;
 		padding: 1rem;
 		padding-inline: 2rem;
 		border-radius: 12px;
-		bottom: 2rem;
+		bottom: 5rem;
 		left: 2rem;
 		max-width: 25%;
 		display: flex;
