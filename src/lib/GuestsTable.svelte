@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
 	import { onMount } from 'svelte';
 	import supabase from './supabaseClient';
 	import Icon from 'svelte-icons-pack/Icon.svelte';
@@ -150,6 +152,7 @@
 					<tr>
 						<th>No</th>
 						<th>Name</th>
+						<th>Description</th>
 						<th>Type</th>
 						<th>Total Guest</th>
 						<th>Check-in</th>
@@ -162,6 +165,7 @@
 							<tr>
 								<td>{index + 1}</td>
 								<td>{guest.name}</td>
+								<td>{guest.description}</td>
 								<td>{guest.type}</td>
 								<td>{guest.total_guest}</td>
 								<td>{formatedDate(guest.created_at)}</td>
