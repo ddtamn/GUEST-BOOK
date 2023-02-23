@@ -110,11 +110,23 @@
 	</div>
 	<div class="footer">
 		<p class="online">Online</p>
-		<h4>https://randhyaririn.online</h4>
+		<!-- <h4>https://randhyaririn.online</h4> -->
 		<div class="logo">
-			<p>Powered by</p>
-			<img src="/favicon.png" alt="" />
-			<p>Dinvite</p>
+			<div class="photo">
+				<p>Photo by :</p>
+				<p class="katanadi">Katanadi</p>
+			</div>
+			<div class="wo">
+				<p>Organized by :</p>
+				<img src="/rustic.jpeg" alt="">
+				<p>Rustic Wedding Organizer</p>
+			</div>
+			<div class="dinvite">
+				<p>Powered by</p>
+				<img src="/favicon.png" alt="" />
+				<p>Dinvite</p>
+			</div>
+			
 		</div>
 	</div>
 </div>
@@ -137,6 +149,9 @@
 	.footer .logo {
 		display: flex;
 		justify-content: center;
+		align-items: center;
+		gap: 3rem;
+
 	}
 
 	.footer .logo img {
@@ -144,11 +159,24 @@
 		margin-left: 1rem;
 		margin-right: 0.3rem;
 		border-radius: 3px;
+		object-fit: cover;
+	}
+	
+	.footer .logo .wo, .footer .logo .dinvite, .footer .logo .photo {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.footer .online {
 		font-weight: bold;
 		position: relative;
+	}
+
+	.footer .katanadi {
+		font-family: "Great Vibes", cursive;
+		margin-left: 1rem;
+		font-size: 1.5rem;
 	}
 
 	.footer .online::before {
